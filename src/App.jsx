@@ -97,44 +97,50 @@ export default function App() {
 
   return (
     <div className="App">
-      <button onClick={assignTeamAndgenerateRandoCaptain}>Click to choose Captain</button>
+      <button className="butotn" onClick={assignTeamAndgenerateRandoCaptain}>
+        Click to choose Captain
+      </button>
       <div>
         {hasFourCaptains && (
-          <div>
+          <>
             <p>Every captain has the right to choose one player</p>
-            {EMPLOYEE_LIST.map((employee, index) => {
-              return (
-                <div key={index}>
-                  <input
-                    type="checkbox"
-                    id={employee.name}
-                    name={employee.name}
-                    value={employee.name}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        assignEmployeeToCaptain(employee.name);
-                      }
-                    }}
-                  />
-                  <label htmlFor={employee.name}>{employee.name}</label>
-                </div>
-              );
-            })}
-          </div>
+            <div className="checkbox">
+              {EMPLOYEE_LIST.map((employee, index) => {
+                return (
+                  <div className="checkbox" key={index}>
+                    <input
+                      type="checkbox"
+                      id={employee.name}
+                      name={employee.name}
+                      value={employee.name}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          assignEmployeeToCaptain(employee.name);
+                        }
+                      }}
+                    />
+                    <label htmlFor={employee.name}>{employee.name}</label>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
-      <button onClick={filterTeamMembers}>
-        Give me remaining employee name
-      </button>
+      {hasFourCaptains && (
+        <button className="butotn" onClick={filterTeamMembers}>
+          Give me remaining employee name
+        </button>
+      )}
 
       {remainingEmployee &&
         remainingEmployee.map((employeeName, index) => (
           <p key={index}>{employeeName.name}</p>
         ))}
 
-      {remainingEmployee && (
+      {remainingEmployee && hasFourCaptains && (
         <div>
-          <button onClick={assignRandomlyEmployee}>
+          <button className="butotn" onClick={assignRandomlyEmployee}>
             Assign team for remaining employee
           </button>
         </div>
@@ -150,16 +156,20 @@ export default function App() {
             </tr>
             <tr>
               {assignedCaptains.map((teamNames, index) => {
-                return <th key={index}>{teamNames.captainName}</th>;
+                return (
+                  <th className="captainName" key={index}>
+                    {teamNames.captainName} (C)
+                  </th>
+                );
               })}
             </tr>
           </thead>
           <tbody>
-          <tr>
-            {assignedCaptains.map((teamNames,index) => {
-              return <td key={index}>{teamNames.teamMembers}</td>;
-            })}
-          </tr>
+            <tr>
+              {assignedCaptains.map((teamNames, index) => {
+                return <td key={index}>{teamNames.teamMembers}</td>;
+              })}
+            </tr>
           </tbody>
         </table>
       )}

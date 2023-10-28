@@ -1,20 +1,20 @@
 export const EMPLOYEE_LIST = [
-    { name: "Saloni Shah", designation: "HR", gender: "female" },
-    { name: "Harshit Shah", designation: "Software Engineer", gender: "male" },
-    { name: "Shailesh Parmar", designation: "Software Engineer", gender: "male" },
+    { name: "Saloni Shah", designation: "HR", gender: "female",remote:false },
+    { name: "Harshit Shah", designation: "Software Engineer", gender: "male",remote:true },
+    { name: "Shailesh Parmar", designation: "Software Engineer", gender: "male",remote:false },
     {
       name: "Sachin Chaurasiya",
       designation: "Software Engineer",
-      gender: "male"
+      gender: "male",remote:false
     },
-    { name: "Ashish Gupta", designation: "Software Engineer", gender: "male" },
-    { name: "Ayush Shah", designation: "Software Engineer", gender: "male" },
-    { name: "Kushal Shinde", designation: "QA", gender: "male" },
-    { name: "Prerana Poojary", designation: "HR", gender: "female" },
-    { name: "Onkar Ravgan", designation: "Software Engineer", gender: "male" },
-    { name: "Aniket Katkar", designation: "Frontend Developer", gender: "male" },
-    { name: "Devyani Kaushik", designation: "UI/UX Designer", gender: "female" },
-    { name: "Harsh Vador", designation: "Software Engineer", gender: "male" }
+    { name: "Ashish Gupta", designation: "Software Engineer", gender: "male",remote:true },
+    { name: "Ayush Shah", designation: "Software Engineer", gender: "male",remote:false },
+    { name: "Kushal Shinde", designation: "QA", gender: "male",remote:false },
+    { name: "Prerana Poojary", designation: "HR", gender: "female",remote:false },
+    { name: "Onkar Ravgan", designation: "Software Engineer", gender: "male",remote:true },
+    { name: "Aniket Katkar", designation: "Frontend Developer", gender: "male",remote:false },
+    { name: "Devyani Kaushik", designation: "UI/UX Designer", gender: "female",remote:false },
+    { name: "Harsh Vador", designation: "Software Engineer", gender: "male",remote:true }
   ];
   
   export const CAPTAINS_LIST = [
