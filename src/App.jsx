@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CAPTAINS_LIST, EMPLOYEE_LIST, TEAM } from "./constant";
 import "./style.css";
+import { trasnformTableData } from "./TableUtil";
 
 export default function App() {
   const [assignedCaptains, setAssignedCaptains] = useState([]);
@@ -95,6 +96,10 @@ export default function App() {
     setCurrentCaptainIndex((prev) => prev + 1);
   };
 
+  const [teams, captains, viceCaptains, ...rest] = trasnformTableData(assignedCaptains)
+
+  console.log([teams, captains, viceCaptains, ...rest])
+
   return (
     <div className="App">
       <button className="butotn" onClick={assignTeamAndgenerateRandoCaptain}>
@@ -105,9 +110,9 @@ export default function App() {
           <>
             <p>Every captain has the right to choose one player</p>
             <div className="checkbox">
-              {EMPLOYEE_LIST.map((employee, index) => {
+              {EMPLOYEE_LIST.map((employee) => {
                 return (
-                  <div className="checkbox" key={index}>
+                  <div className="checkbox" key={employee.name}>
                     <input
                       type="checkbox"
                       id={employee.name}
@@ -150,15 +155,15 @@ export default function App() {
         <table style={{ width: "100%" }}>
           <thead>
             <tr>
-              {assignedCaptains.map((teamNames, index) => {
-                return <th key={index}>{teamNames.teamName}</th>;
+              {teams?.map((team) => {
+                return <th key={team}>{team}</th>;
               })}
             </tr>
             <tr>
-              {assignedCaptains.map((teamNames, index) => {
+              {captains?.map((captain, index) => {
                 return (
-                  <th className="captainName" key={index}>
-                    {teamNames.captainName} (C)
+                  <th className="captainName" key={captain}>
+                    {captain} { captain &&  '(C)'}
                   </th>
                 );
               })}
@@ -166,10 +171,15 @@ export default function App() {
           </thead>
           <tbody>
             <tr>
-              {assignedCaptains.map((teamNames, index) => {
-                return <td key={index}>{teamNames.teamMembers}</td>;
+              {viceCaptains?.map((vc) => {
+                return <td key={vc}>{vc} (VC)</td>;
               })}
             </tr>
+            {rest?.map((r, index) => <tr key={index}>
+              {r.map((teamName) => {
+                return <td key={teamName}>{teamName}</td>;
+              })}
+            </tr>)}
           </tbody>
         </table>
       )}
