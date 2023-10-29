@@ -1,17 +1,24 @@
-import { useState } from "react";
-import { CAPTAINS_LIST, EMPLOYEE_LIST, TEAM } from "./constant";
+import { useRef, useState } from "react";
+import { CAPTAINS_LIST, EMPLOYEE_LIST, TEAM, } from "./constant";
 import "./style.css";
 import { trasnformTableData } from "./TableUtil";
+import { Modals } from "./modal";
 
 export default function App() {
   const [assignedCaptains, setAssignedCaptains] = useState([]);
   const [currentTeamIndex] = useState(0);
   const [currentCaptainIndex, setCurrentCaptainIndex] = useState(0);
   const [remainingEmployee, setRemainingEmployee] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const typewriterRef = useRef(null);
 
   const hasFourCaptains =
     assignedCaptains.length === 4 &&
     assignedCaptains.every((item) => item.captainName);
+
+  const handleModal = () => {
+    setOpenModal(!openModal);
+  };
 
   const assignTeamAndgenerateRandoCaptain = () => {
     const availableTeams = TEAM.filter(
@@ -70,19 +77,15 @@ export default function App() {
       return;
     }
 
-    const generateRandoEmployee =
-      remainingEmployee[Math.floor(Math.random() * remainingEmployee.length)];
-
-    setRemainingEmployee((remainingEmployee) => {
-      return remainingEmployee.filter(
-        (employee) => employee.name !== generateRandoEmployee.name
-      );
-    });
-
     setAssignedCaptains((assignedCaptains) => {
       return assignedCaptains.map((teamInfo, index) => {
         if (index === currentCaptainIndex) {
           currentCaptainIndex === 3 && setCurrentCaptainIndex(0);
+          setRemainingEmployee((remainingEmployee) => {
+            return remainingEmployee.filter(
+              (employee) => employee.name !== generateRandoEmployee.name
+            );
+          });
           return {
             ...teamInfo,
             teamMembers: [...teamInfo.teamMembers, generateRandoEmployee.name],
@@ -96,13 +99,24 @@ export default function App() {
     setCurrentCaptainIndex((prev) => prev + 1);
   };
 
-  const [teams, captains, viceCaptains, ...rest] = trasnformTableData(assignedCaptains)
-
-  console.log([teams, captains, viceCaptains, ...rest])
+  const [teams, captains, viceCaptains, ...rest] =
+    trasnformTableData(assignedCaptains);
 
   return (
     <div className="App">
-      <button className="butotn" onClick={assignTeamAndgenerateRandoCaptain}>
+      <div>
+        <button onClick={handleModal} className="button">
+          Reveal Team
+        </button>
+      </div>
+      {openModal && (
+        <Modals
+          open={openModal}
+          handleConfirm={handleModal}
+        />
+      )}
+
+      <button className="button" onClick={assignTeamAndgenerateRandoCaptain}>
         Click to choose Captain
       </button>
       <div>
@@ -133,7 +147,7 @@ export default function App() {
         )}
       </div>
       {hasFourCaptains && (
-        <button className="butotn" onClick={filterTeamMembers}>
+        <button className="button" onClick={filterTeamMembers}>
           Give me remaining employee name
         </button>
       )}
@@ -145,14 +159,18 @@ export default function App() {
 
       {remainingEmployee && hasFourCaptains && (
         <div>
-          <button className="butotn" onClick={assignRandomlyEmployee}>
+          <button className="button" onClick={assignRandomlyEmployee}>
             Assign team for remaining employee
           </button>
         </div>
       )}
 
       {assignedCaptains.length !== 0 && (
-        <table style={{ width: "100%" }}>
+        <table className="tr-body">
+          <col className="hydron" />
+          <col className="magnum" />
+          <col className="hellfire" />
+          <col className="zephyr" />
           <thead>
             <tr>
               {teams?.map((team) => {
@@ -160,10 +178,14 @@ export default function App() {
               })}
             </tr>
             <tr>
-              {captains?.map((captain, index) => {
+              {captains?.map((captain) => {
                 return (
-                  <th className="captainName" key={captain}>
-                    {captain} { captain &&  '(C)'}
+                  <th key={captain}>
+                    <div ref={typewriterRef} className="typewriter">
+                      <h6>
+                        {captain} {captain && "(C)"}
+                      </h6>
+                    </div>
                   </th>
                 );
               })}
@@ -172,14 +194,31 @@ export default function App() {
           <tbody>
             <tr>
               {viceCaptains?.map((vc) => {
-                return <td key={vc}>{vc} (VC)</td>;
+                return (
+                  <td key={vc}>
+                    <div ref={typewriterRef} className="typewriter">
+                      <h6>
+                        {" "}
+                        {vc} {vc && "(VC)"}
+                      </h6>
+                    </div>
+                  </td>
+                );
               })}
             </tr>
-            {rest?.map((r, index) => <tr key={index}>
-              {r.map((teamName) => {
-                return <td key={teamName}>{teamName}</td>;
-              })}
-            </tr>)}
+            {rest?.map((r, index) => (
+              <tr key={index}>
+                {r.map((teamName) => {
+                  return (
+                    <td key={teamName}>
+                      <div ref={typewriterRef} className="typewriter">
+                        <h6> {teamName}</h6>
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
           </tbody>
         </table>
       )}

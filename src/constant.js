@@ -1,7 +1,7 @@
 export const EMPLOYEE_LIST = [
   { name: "Saloni Shah", designation: "HR", gender: "female", remote: false },
   {
-    name: "Harshit Shah",
+    name: "Harshit Shah (R)",
     designation: "Software Engineer",
     gender: "male",
     remote: true,
@@ -19,7 +19,7 @@ export const EMPLOYEE_LIST = [
     remote: false,
   },
   {
-    name: "Ashish Gupta",
+    name: "Ashish Gupta (R)",
     designation: "Software Engineer",
     gender: "male",
     remote: true,
@@ -38,7 +38,7 @@ export const EMPLOYEE_LIST = [
     remote: false,
   },
   {
-    name: "Onkar Ravgan",
+    name: "Onkar Ravgan (R)",
     designation: "Software Engineer",
     gender: "male",
     remote: true,
@@ -56,7 +56,7 @@ export const EMPLOYEE_LIST = [
     remote: false,
   },
   {
-    name: "Harsh Vador",
+    name: "Harsh Vador (R)",
     designation: "Software Engineer",
     gender: "male",
     remote: true,
@@ -64,13 +64,56 @@ export const EMPLOYEE_LIST = [
 ];
 
 export const CAPTAINS_LIST = [
-  { name: "Sanket Shah", designation: "Captain", gender: "male" },
-  { name: "Aashit Kothari", designation: "Captain", gender: "male" },
-  { name: "Kenil Shah", designation: "Captain", gender: "male" },
-  { name: "Mayur Singal", designation: "Captain", gender: "male" },
-  { name: "Rupesh Chavan", designation: "Captain", gender: "male" },
-  { name: "Shilpa Vernekar", designation: "Captain", gender: "female" },
-  { name: "Yug Shah", designation: "Captain", gender: "male" },
+  { name: "Sanket Shah (R)", designation: "Captain", gender: "male", remote: true },
+  {
+    name: "Aashit Kothari (R)",
+    designation: "Captain",
+    gender: "male",
+    remote: true,
+  },
+  { name: "Kenil Shah", designation: "Captain", gender: "male", remote: false },
+  {
+    name: "Mayur Singal",
+    designation: "Captain",
+    gender: "male",
+    remote: false,
+  },
+  {
+    name: "Rupesh Chavan",
+    designation: "Captain",
+    gender: "male",
+    remote: false,
+  },
+  {
+    name: "Shilpa Vernekar (R)",
+    designation: "Captain",
+    gender: "female",
+    remote: true,
+  },
+  { name: "Yug Shah", designation: "Captain", gender: "male", remote: false },
 ];
 
 export const TEAM = ["Hydron", "Magnum", "Hellfire", "Zephyr"];
+
+export const TEAM_DETAILS=[
+    {
+        id:1,
+        src:"../src/assets/Hellfire.png",
+        team:"Hellfire"
+    },
+    {
+        id:2,
+        src:"../src/assets/Hydron.png",
+        team:"Hydron"
+    },
+    {
+        id:3,
+        src:"../src/assets/Magnum.png",
+        team:"Magnum"
+    },
+    {
+        id:3,
+        src:"../src/assets/Zephyr.png",
+        team:"Zephyr"
+    }
+]

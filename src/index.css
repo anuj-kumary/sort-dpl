@@ -3,7 +3,6 @@
   line-height: 1.5;
   font-weight: 400;
 
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -45,9 +44,39 @@ button {
 }
 button:hover {
   border-color: #646cff;
+  cursor: pointer;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.container-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h5 {
+  margin-top: 1rem;
+  font-size: 20px;
+  background-image: linear-gradient(
+    to right top,
+    #ffff34,
+    #ffc812,
+    #ff8f2f,
+    #ff554d,
+    #eb1267
+  );
+  background-size: 50% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientAnim 7.5s ease alternate infinite;
+}
+
+@keyframes gradientAnim {
+  to {
+    background-position: 100% top;
+  }
+}

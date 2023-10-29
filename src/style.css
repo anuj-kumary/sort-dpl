@@ -1,33 +1,148 @@
+:root {
+  --primary: #0e2431;
+  --secondary: #4070f4;
+  --secondary-dark: #3665eb;
+  --gray: #666;
+  --body-font: "Nunito", sans-serif;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
-
 table {
-  border-spacing: 0;
-  border: 1px solid black;
+  border-collapse: separate;
+  border-radius: 10px;
+  overflow: hidden;
+  display: inline-table;
+  margin-top: 1rem;
 }
 th,
 td {
-  margin: 0;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   min-width: 200px;
   height: 25px;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-
-  :last-child {
-    border-right: 0;
-  }
+  border-right: 1px solid grey;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 700;
 }
-.butotn {
+
+.button {
   margin: 1rem 0;
 }
-.captainName{
-  color: #646cff;;
+.captainName {
+  color: #646cff;
 }
-.checkbox{
-display: flex;
+.checkbox {
+  display: flex;
+}
+.tr-body {
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  width: 100%;
+}
+.hydron {
+  background-color: #0275ff;
+}
+.magnum {
+  background-color: green;
+}
+.hellfire {
+  background-color: #d32f2f;
+}
+.zephyr {
+  background-color: yellow;
+}
+.typewriter h6 {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 3.5s steps(30, end), blink-caret 0.75s step-end infinite;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+.confirm {
+  width: 500px;
+  height: 280px;
+  background: #fff;
+  transition: 0.6s;
+  z-index: 100;
+  position: absolute;
+  top: -230px;
+  left: calc(50% - 300px);
+  padding: 2rem;
+}
+
+.confirm.show {
+  top: calc(50% - 140px);
+  border-radius: 10px;
+}
+
+.confirm-content {
+  display: flex;
+  color: var(--primary);
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+}
+
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.confirm.show + .overlay {
+  display: block;
+}
+.img {
+  width: 100px;
+  height: 100px;
+  padding: 1rem;
+}
+
+@media screen and (max-width: 450px) {
+  .confirm {
+    width: 300px;
+    left: calc(50% - 150px);
+  }
+}
+
+@-webkit-keyframes typing {
+  from {
+    width: 0;
+  }
+}
+@-webkit-keyframes blink-caret {
+  50% {
+    border-color: transparent;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 50%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: orange;
+  }
 }
