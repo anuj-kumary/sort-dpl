@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { CAPTAINS_LIST, EMPLOYEE_LIST, TEAM, } from "./constant";
+import { CAPTAINS_LIST, EMPLOYEE_LIST, TEAM } from "./constant";
 import "./style.css";
 import { trasnformTableData } from "./TableUtil";
 import { Modals } from "./modal";
@@ -11,6 +11,10 @@ export default function App() {
   const [remainingEmployee, setRemainingEmployee] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const typewriterRef = useRef(null);
+  const [
+    remoteEmployeeListToAllotRandomly,
+    setRemoteEmployeeListToAllotRandomly,
+  ] = useState([]);
 
   const hasFourCaptains =
     assignedCaptains.length === 4 &&
@@ -37,38 +41,56 @@ export default function App() {
     );
     const randomCaptain =
       availableCaptains[Math.floor(Math.random() * availableCaptains.length)];
+    let isRemote = 0;
+    if (randomCaptain.remote) {
+      isRemote = 1;
+    }
 
     const result = {
       captainName: randomCaptain.name,
       teamName: currentTeam,
       teamMembers: [],
+      remoteCount: isRemote,
     };
     setAssignedCaptains((prevCaptains) => [...prevCaptains, result]);
   };
-
   function filterTeamMembers() {
-    const newEmployee = EMPLOYEE_LIST.filter(
+    const newEmployeeList = EMPLOYEE_LIST.filter(
       (employee) =>
         !assignedCaptains.some((team) =>
           team.teamMembers.includes(employee.name)
         )
     );
-    setRemainingEmployee(newEmployee);
+    setRemainingEmployee(newEmployeeList);
+    const remoteEmployee = newEmployeeList.filter(
+      (employee) => employee.remote
+    );
+    setRemoteEmployeeListToAllotRandomly(remoteEmployee);
+    return newEmployeeList;
   }
 
-  const assignEmployeeToCaptain = (employeeName) => {
-    setAssignedCaptains((assignedCaptains) => {
-      return assignedCaptains.map((teamInfo, index) => {
-        if (index === currentCaptainIndex) {
-          currentCaptainIndex === 3 && setCurrentCaptainIndex(0);
-          return { ...teamInfo, teamMembers: [employeeName] };
-        } else {
-          return teamInfo;
-        }
-      });
+  const assignEmployeeToCaptain = (employee) => {
+    const updatedAssignedCaptains = assignedCaptains.map((teamInfo, index) => {
+      if (index === currentCaptainIndex) {
+        currentCaptainIndex === 3 && setCurrentCaptainIndex(0);
+        return {
+          ...teamInfo,
+          teamMembers: [employee],
+          remoteCount: employee.remote
+            ? teamInfo.remoteCount + 1
+            : teamInfo.remoteCount,
+        };
+      } else {
+        return teamInfo;
+      }
     });
+    setAssignedCaptains(updatedAssignedCaptains);
 
     setCurrentCaptainIndex((prev) => prev + 1);
+  };
+  const handleGenerateRandomEmployee = (list) => {
+    const generateRandoEmployee = list[Math.floor(Math.random() * list.length)];
+    return generateRandoEmployee;
   };
 
   const assignRandomlyEmployee = () => {
@@ -77,30 +99,73 @@ export default function App() {
       return;
     }
 
-    setAssignedCaptains((assignedCaptains) => {
-      return assignedCaptains.map((teamInfo, index) => {
-        if (index === currentCaptainIndex) {
-          currentCaptainIndex === 3 && setCurrentCaptainIndex(0);
-          setRemainingEmployee((remainingEmployee) => {
-            return remainingEmployee.filter(
-              (employee) => employee.name !== generateRandoEmployee.name
-            );
-          });
+    if (remoteEmployeeListToAllotRandomly.length < 1) {
+      const employeeToAdd = handleGenerateRandomEmployee(remainingEmployee);
+      const teamWithMinTeamMembers = Math.min(
+        ...assignedCaptains.map(({ teamMembers }) => teamMembers.length)
+      );
+      const indexOfTeamWithLowestMembers = assignedCaptains.findIndex(
+        ({ teamMembers }) => teamMembers.length === teamWithMinTeamMembers
+      );
+      setCurrentCaptainIndex(indexOfTeamWithLowestMembers);
+      setAssignedCaptains((prev) =>
+        prev.map((teamInfo, i) => {
+          if (i === indexOfTeamWithLowestMembers) {
+            return {
+              ...teamInfo,
+              remoteCount: teamInfo.remoteCount + 1,
+              teamMembers: [...teamInfo.teamMembers, employeeToAdd],
+            };
+          } else {
+            return teamInfo;
+          }
+        })
+      );
+
+      setRemainingEmployee((prev) => {
+        return prev.filter((single) => single.name !== employeeToAdd.name);
+      });
+
+      return;
+    }
+
+    const remoteEmployee = handleGenerateRandomEmployee(
+      remoteEmployeeListToAllotRandomly
+    );
+
+    const lowestRemoteCount = Math.min(
+      ...assignedCaptains.map(({ remoteCount }) => remoteCount)
+    );
+
+    const indexOfTeamWithLowestRemoteCount = assignedCaptains.findIndex(
+      ({ remoteCount }) => remoteCount === lowestRemoteCount
+    );
+
+    setCurrentCaptainIndex(indexOfTeamWithLowestRemoteCount);
+    setRemoteEmployeeListToAllotRandomly((prev) =>
+      prev.filter((single) => single.name !== remoteEmployee.name)
+    );
+
+    setAssignedCaptains((prev) =>
+      prev.map((teamInfo, i) => {
+        if (i === indexOfTeamWithLowestRemoteCount) {
           return {
             ...teamInfo,
-            teamMembers: [...teamInfo.teamMembers, generateRandoEmployee.name],
+            remoteCount: teamInfo.remoteCount + 1,
+            teamMembers: [...teamInfo.teamMembers, remoteEmployee],
           };
         } else {
           return teamInfo;
         }
-      });
-    });
+      })
+    );
 
-    setCurrentCaptainIndex((prev) => prev + 1);
+    setRemainingEmployee((prev) => {
+      return prev.filter((single) => single.name !== remoteEmployee.name);
+    });
   };
 
-  const [teams, captains, viceCaptains, ...rest] =
-    trasnformTableData(assignedCaptains);
+  const [teams, captains, viceCaptains, ...rest] =trasnformTableData(assignedCaptains);
 
   return (
     <div className="App">
@@ -109,12 +174,7 @@ export default function App() {
           Reveal Team
         </button>
       </div>
-      {openModal && (
-        <Modals
-          open={openModal}
-          handleConfirm={handleModal}
-        />
-      )}
+      {openModal && <Modals open={openModal} handleConfirm={handleModal} />}
 
       <button className="button" onClick={assignTeamAndgenerateRandoCaptain}>
         Click to choose Captain
@@ -134,7 +194,7 @@ export default function App() {
                       value={employee.name}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          assignEmployeeToCaptain(employee.name);
+                          assignEmployeeToCaptain(employee);
                         }
                       }}
                     />

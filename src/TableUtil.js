@@ -11,7 +11,7 @@ export const trasnformTableData = (data) => {
       const otherTeamMembers = data.find(
         (d) => d.teamName === team
       ).teamMembers;
-      return otherTeamMembers[index];
+      return otherTeamMembers[index]?.name;
     });
   });
 
