@@ -1,15 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Metal+Mania&family=Righteous&display=swap");
 :root {
   --primary: #0e2431;
   --secondary: #4070f4;
   --secondary-dark: #3665eb;
   --gray: #666;
-  --body-font: "Nunito", sans-serif;
+  --body-font: "Metal-Mania", "Righteous";
 }
 #root {
   max-width: 1280px;
-  margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+h2 {
+  font-family: var(--body-font);
+  font-size: 40px;
+}
+.App {
+  display: flex;
+  justify-content: space-between;
 }
 table {
   border-collapse: separate;
@@ -20,8 +28,8 @@ table {
 }
 th,
 td {
-  padding: 0.5rem 1rem;
-  min-width: 200px;
+  padding: 0.5rem;
+  min-width: 150px;
   height: 25px;
   border-right: 1px solid grey;
   border-radius: 10px;
@@ -29,6 +37,13 @@ td {
   text-align: left;
   cursor: pointer;
   font-weight: 700;
+}
+.teamName {
+  color: var(--gray);
+  text-align: "left";
+  cursor: "pointer";
+  margin-left: "2rem";
+  font-weight: 300;
 }
 
 .button {

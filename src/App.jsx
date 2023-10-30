@@ -1,28 +1,34 @@
-import { useRef, useState } from "react";
-import { CAPTAINS_LIST, EMPLOYEE_LIST, TEAM } from "./constant";
+import { useEffect, useRef, useState } from "react";
+import { CAPTAINS_LIST, EMPLOYEE, TEAM } from "./constant";
 import "./style.css";
 import { trasnformTableData } from "./TableUtil";
-import { Modals } from "./modal";
+import ThemeGif from "./assets/gif.mp4";
 
 export default function App() {
-  const [assignedCaptains, setAssignedCaptains] = useState([]);
+  const getTeamInfoFromLocalStorage = localStorage.getItem("teamInfo");
+  const parsedGetTeamInfoFromLocalStorage = JSON.parse(
+    getTeamInfoFromLocalStorage
+  );
+  const [assignedCaptains, setAssignedCaptains] = useState(
+    parsedGetTeamInfoFromLocalStorage || []
+  );
   const [currentTeamIndex] = useState(0);
   const [currentCaptainIndex, setCurrentCaptainIndex] = useState(0);
-  const [remainingEmployee, setRemainingEmployee] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
+  const [removedEmployees, setRemovedEmployees] = useState([]);
+  const [remainingEmployee, setRemainingEmployee] = useState(EMPLOYEE);
   const typewriterRef = useRef(null);
   const [
     remoteEmployeeListToAllotRandomly,
     setRemoteEmployeeListToAllotRandomly,
   ] = useState([]);
 
+  useEffect(() => {
+    localStorage.setItem("teamInfo", JSON.stringify(assignedCaptains));
+  }, [assignedCaptains]);
+
   const hasFourCaptains =
     assignedCaptains.length === 4 &&
     assignedCaptains.every((item) => item.captainName);
-
-  const handleModal = () => {
-    setOpenModal(!openModal);
-  };
 
   const assignTeamAndgenerateRandoCaptain = () => {
     const availableTeams = TEAM.filter(
@@ -53,23 +59,32 @@ export default function App() {
       remoteCount: isRemote,
     };
     setAssignedCaptains((prevCaptains) => [...prevCaptains, result]);
+    filterTeamMemberFromEmployee(randomCaptain);
   };
-  function filterTeamMembers() {
-    const newEmployeeList = EMPLOYEE_LIST.filter(
-      (employee) =>
-        !assignedCaptains.some((team) =>
-          team.teamMembers.includes(employee.name)
-        )
+
+  const filterTeamMemberFromEmployee = (employee) => {
+    if (removedEmployees.some((removed) => removed.name === employee.name)) {
+      return;
+    }
+    const newEmployeeList = remainingEmployee.filter(
+      (employees) => employees.name !== employee.name
     );
+    setRemovedEmployees([...removedEmployees, employee]);
     setRemainingEmployee(newEmployeeList);
     const remoteEmployee = newEmployeeList.filter(
       (employee) => employee.remote
     );
     setRemoteEmployeeListToAllotRandomly(remoteEmployee);
-    return newEmployeeList;
-  }
+  };
 
   const assignEmployeeToCaptain = (employee) => {
+    if (
+      Array.isArray(viceCaptains) &&
+      viceCaptains.length >= 4 &&
+      viceCaptains.slice(0, 4).every((item) => item !== undefined)
+    ) {
+      return;
+    }
     const updatedAssignedCaptains = assignedCaptains.map((teamInfo, index) => {
       if (index === currentCaptainIndex) {
         currentCaptainIndex === 3 && setCurrentCaptainIndex(0);
@@ -85,7 +100,7 @@ export default function App() {
       }
     });
     setAssignedCaptains(updatedAssignedCaptains);
-
+    filterTeamMemberFromEmployee(employee);
     setCurrentCaptainIndex((prev) => prev + 1);
   };
   const handleGenerateRandomEmployee = (list) => {
@@ -165,123 +180,101 @@ export default function App() {
     });
   };
 
-  const [teams, captains, viceCaptains, ...rest] =trasnformTableData(assignedCaptains);
+  const [teams, captains, viceCaptains, ...rest] =
+    trasnformTableData(assignedCaptains);
 
   return (
-    <div className="App">
-      <div>
-        <button onClick={handleModal} className="button">
-          Reveal Team
-        </button>
-      </div>
-      {openModal && <Modals open={openModal} handleConfirm={handleModal} />}
+    <>
+      <h2>Deuex Premier League</h2>
+      <div className="App">
+        <div style={{ width: "80%" }}>
+          {!hasFourCaptains && (
+            <button
+              className="button"
+              onClick={assignTeamAndgenerateRandoCaptain}
+            >
+              Choose Captain
+            </button>
+          )}
 
-      <button className="button" onClick={assignTeamAndgenerateRandoCaptain}>
-        Click to choose Captain
-      </button>
-      <div>
-        {hasFourCaptains && (
-          <>
-            <p>Every captain has the right to choose one player</p>
-            <div className="checkbox">
-              {EMPLOYEE_LIST.map((employee) => {
-                return (
-                  <div className="checkbox" key={employee.name}>
-                    <input
-                      type="checkbox"
-                      id={employee.name}
-                      name={employee.name}
-                      value={employee.name}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          assignEmployeeToCaptain(employee);
-                        }
-                      }}
-                    />
-                    <label htmlFor={employee.name}>{employee.name}</label>
-                  </div>
-                );
-              })}
+          {hasFourCaptains && (
+            <div>
+              <button className="button" onClick={assignRandomlyEmployee}>
+                Choose player
+              </button>
             </div>
-          </>
-        )}
-      </div>
-      {hasFourCaptains && (
-        <button className="button" onClick={filterTeamMembers}>
-          Give me remaining employee name
-        </button>
-      )}
+          )}
 
-      {remainingEmployee &&
-        remainingEmployee.map((employeeName, index) => (
-          <p key={index}>{employeeName.name}</p>
-        ))}
-
-      {remainingEmployee && hasFourCaptains && (
-        <div>
-          <button className="button" onClick={assignRandomlyEmployee}>
-            Assign team for remaining employee
-          </button>
-        </div>
-      )}
-
-      {assignedCaptains.length !== 0 && (
-        <table className="tr-body">
-          <col className="hydron" />
-          <col className="magnum" />
-          <col className="hellfire" />
-          <col className="zephyr" />
-          <thead>
-            <tr>
-              {teams?.map((team) => {
-                return <th key={team}>{team}</th>;
-              })}
-            </tr>
-            <tr>
-              {captains?.map((captain) => {
-                return (
-                  <th key={captain}>
-                    <div ref={typewriterRef} className="typewriter">
-                      <h6>
-                        {captain} {captain && "(C)"}
-                      </h6>
-                    </div>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              {viceCaptains?.map((vc) => {
-                return (
-                  <td key={vc}>
-                    <div ref={typewriterRef} className="typewriter">
-                      <h6>
-                        {" "}
-                        {vc} {vc && "(VC)"}
-                      </h6>
-                    </div>
-                  </td>
-                );
-              })}
-            </tr>
-            {rest?.map((r, index) => (
-              <tr key={index}>
-                {r.map((teamName) => {
+          <table className="tr-body">
+            <col className="hydron" />
+            <col className="magnum" />
+            <col className="hellfire" />
+            <col className="zephyr" />
+            <thead>
+              <tr>
+                {teams?.map((team) => {
+                  return <th key={team}>{team}</th>;
+                })}
+              </tr>
+              <tr>
+                {captains?.map((captain) => {
                   return (
-                    <td key={teamName}>
+                    <th key={captain}>
                       <div ref={typewriterRef} className="typewriter">
-                        <h6> {teamName}</h6>
+                        <h6>
+                          {captain} {captain && "(C)"}
+                        </h6>
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {viceCaptains?.map((vc) => {
+                  return (
+                    <td key={vc}>
+                      <div ref={typewriterRef} className="typewriter">
+                        <h6>
+                          {" "}
+                          {vc} {vc && "(VC)"}
+                        </h6>
                       </div>
                     </td>
                   );
                 })}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+              {rest?.map((r, index) => (
+                <tr key={index}>
+                  {r.map((teamName) => {
+                    return (
+                      <td key={teamName}>
+                        <div ref={typewriterRef} className="typewriter">
+                          <h6> {teamName}</h6>
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div>
+          {remainingEmployee &&
+            remainingEmployee.map((employee) => {
+              return (
+                <p
+                  onClick={() => assignEmployeeToCaptain(employee)}
+                  className="teamName"
+                >
+                  {employee.name}
+                </p>
+              );
+            })}
+        </div>
+      </div>
+    </>
   );
 }
