@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CAPTAINS_LIST, EMPLOYEE, TEAM } from "./constant";
 import "./style.css";
 import { trasnformTableData } from "./TableUtil";
@@ -14,7 +14,6 @@ export default function App() {
   const [removedEmployees, setRemovedEmployees] = useState([]);
   const [remainingEmployee, setRemainingEmployee] = useState(EMPLOYEE);
   const [showTeamVideo, setShowTeamVideo] = useState(false);
-  const typewriterRef = useRef(null);
   const [
     remoteEmployeeListToAllotRandomly,
     setRemoteEmployeeListToAllotRandomly,
@@ -217,13 +216,14 @@ export default function App() {
               </button>
             )}
 
-            {hasFourCaptains && (
-              <div>
-                <button className="button" onClick={assignRandomlyEmployee}>
-                  Choose player
-                </button>
-              </div>
-            )}
+            {viceCaptains.length === 4 &&
+              viceCaptains.every((item) => item !== undefined) && (
+                <div>
+                  <button className="button" onClick={assignRandomlyEmployee}>
+                    Choose player
+                  </button>
+                </div>
+              )}
 
             <table className="tr-body">
               <col className="hydron" />
@@ -288,6 +288,7 @@ export default function App() {
                   <p
                     onClick={() => assignEmployeeToCaptain(employee)}
                     className="teamName"
+                    style={{ cursor: "pointer" }}
                   >
                     {employee.name}
                   </p>
