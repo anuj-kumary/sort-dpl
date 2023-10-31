@@ -2,25 +2,31 @@ import { useEffect, useRef, useState } from "react";
 import { CAPTAINS_LIST, EMPLOYEE, TEAM } from "./constant";
 import "./style.css";
 import { trasnformTableData } from "./TableUtil";
-import ThemeGif from "./assets/gif.mp4";
+import VideoBackground from "./VideoBackground";
 
 export default function App() {
-  const getTeamInfoFromLocalStorage = localStorage.getItem("teamInfo");
-  const parsedGetTeamInfoFromLocalStorage = JSON.parse(
-    getTeamInfoFromLocalStorage
-  );
   const [assignedCaptains, setAssignedCaptains] = useState(
-    parsedGetTeamInfoFromLocalStorage || []
+    JSON.parse(localStorage.getItem("teamInfo") ?? "[]") ?? []
   );
   const [currentTeamIndex] = useState(0);
+  const [currentTeam, setCurrentTeam] = useState("");
   const [currentCaptainIndex, setCurrentCaptainIndex] = useState(0);
   const [removedEmployees, setRemovedEmployees] = useState([]);
   const [remainingEmployee, setRemainingEmployee] = useState(EMPLOYEE);
+  const [showTeamVideo, setShowTeamVideo] = useState(false);
   const typewriterRef = useRef(null);
   const [
     remoteEmployeeListToAllotRandomly,
     setRemoteEmployeeListToAllotRandomly,
   ] = useState([]);
+
+  useEffect(() => {
+    const getTeamInfoFromLocalStorage = localStorage.getItem("teamInfo");
+    const parsedGetTeamInfoFromLocalStorage = JSON.parse(
+      getTeamInfoFromLocalStorage
+    );
+    setAssignedCaptains(parsedGetTeamInfoFromLocalStorage || []);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("teamInfo", JSON.stringify(assignedCaptains));
@@ -34,32 +40,43 @@ export default function App() {
     const availableTeams = TEAM.filter(
       (team) => !assignedCaptains.some((assigned) => assigned.teamName === team)
     );
+
     if (availableTeams.length === 0) {
       alert("All teams are already assigned a captain.");
       return;
     }
-    const currentTeam = availableTeams[currentTeamIndex];
-    const availableCaptains = CAPTAINS_LIST.filter(
-      (captain) =>
-        !assignedCaptains.some(
-          (assigned) => assigned.captainName === captain.name
-        )
-    );
-    const randomCaptain =
-      availableCaptains[Math.floor(Math.random() * availableCaptains.length)];
-    let isRemote = 0;
-    if (randomCaptain.remote) {
-      isRemote = 1;
-    }
 
-    const result = {
-      captainName: randomCaptain.name,
-      teamName: currentTeam,
-      teamMembers: [],
-      remoteCount: isRemote,
-    };
-    setAssignedCaptains((prevCaptains) => [...prevCaptains, result]);
-    filterTeamMemberFromEmployee(randomCaptain);
+    const currentTeam = availableTeams[currentTeamIndex];
+    setCurrentTeam(currentTeam);
+    setShowTeamVideo(true);
+
+    setTimeout(() => {
+      setShowTeamVideo(false);
+      const availableCaptains = CAPTAINS_LIST.filter(
+        (captain) =>
+          !assignedCaptains.some(
+            (assigned) => assigned.captainName === captain.name
+          )
+      );
+
+      const randomCaptain =
+        availableCaptains[Math.floor(Math.random() * availableCaptains.length)];
+
+      let isRemote = 0;
+      if (randomCaptain.remote) {
+        isRemote = 1;
+      }
+
+      const result = {
+        captainName: randomCaptain.name,
+        teamName: currentTeam,
+        teamMembers: [],
+        remoteCount: isRemote,
+      };
+
+      setAssignedCaptains((prevCaptains) => [...prevCaptains, result]);
+      filterTeamMemberFromEmployee(randomCaptain);
+    }, 2500);
   };
 
   const filterTeamMemberFromEmployee = (employee) => {
@@ -85,6 +102,7 @@ export default function App() {
     ) {
       return;
     }
+    setCurrentTeam(employee.teamName);
     const updatedAssignedCaptains = assignedCaptains.map((teamInfo, index) => {
       if (index === currentCaptainIndex) {
         currentCaptainIndex === 3 && setCurrentCaptainIndex(0);
@@ -123,6 +141,7 @@ export default function App() {
         ({ teamMembers }) => teamMembers.length === teamWithMinTeamMembers
       );
       setCurrentCaptainIndex(indexOfTeamWithLowestMembers);
+      setCurrentTeam(employeeToAdd.teamName);
       setAssignedCaptains((prev) =>
         prev.map((teamInfo, i) => {
           if (i === indexOfTeamWithLowestMembers) {
@@ -160,7 +179,7 @@ export default function App() {
     setRemoteEmployeeListToAllotRandomly((prev) =>
       prev.filter((single) => single.name !== remoteEmployee.name)
     );
-
+    setCurrentTeam(remoteEmployee.teamName);
     setAssignedCaptains((prev) =>
       prev.map((teamInfo, i) => {
         if (i === indexOfTeamWithLowestRemoteCount) {
@@ -185,96 +204,99 @@ export default function App() {
 
   return (
     <>
-      <h2>Deuex Premier League</h2>
-      <div className="App">
-        <div style={{ width: "80%" }}>
-          {!hasFourCaptains && (
-            <button
-              className="button"
-              onClick={assignTeamAndgenerateRandoCaptain}
-            >
-              Choose Captain
-            </button>
-          )}
-
-          {hasFourCaptains && (
-            <div>
-              <button className="button" onClick={assignRandomlyEmployee}>
-                Choose player
+      <div style={{ padding: "1rem" }}>
+        <h2>Deuex Premier League</h2>
+        <div className="App">
+          <div style={{ width: "80%" }}>
+            {!hasFourCaptains && (
+              <button
+                className="button"
+                onClick={assignTeamAndgenerateRandoCaptain}
+              >
+                Choose Captain
               </button>
-            </div>
-          )}
+            )}
 
-          <table className="tr-body">
-            <col className="hydron" />
-            <col className="magnum" />
-            <col className="hellfire" />
-            <col className="zephyr" />
-            <thead>
-              <tr>
-                {teams?.map((team) => {
-                  return <th key={team}>{team}</th>;
-                })}
-              </tr>
-              <tr>
-                {captains?.map((captain) => {
-                  return (
-                    <th key={captain}>
-                      <div ref={typewriterRef} className="typewriter">
-                        <h6>
-                          {captain} {captain && "(C)"}
-                        </h6>
-                      </div>
-                    </th>
-                  );
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                {viceCaptains?.map((vc) => {
-                  return (
-                    <td key={vc}>
-                      <div ref={typewriterRef} className="typewriter">
-                        <h6>
-                          {" "}
-                          {vc} {vc && "(VC)"}
-                        </h6>
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-              {rest?.map((r, index) => (
-                <tr key={index}>
-                  {r.map((teamName) => {
+            {hasFourCaptains && (
+              <div>
+                <button className="button" onClick={assignRandomlyEmployee}>
+                  Choose player
+                </button>
+              </div>
+            )}
+
+            <table className="tr-body">
+              <col className="hydron" />
+              <col className="magnum" />
+              <col className="hellfire" />
+              <col className="zephyr" />
+              <thead>
+                <tr>
+                  {teams?.map((team) => {
+                    return <th key={team}>{team}</th>;
+                  })}
+                </tr>
+                <tr>
+                  {captains?.map((captain) => {
                     return (
-                      <td key={teamName}>
-                        <div ref={typewriterRef} className="typewriter">
-                          <h6> {teamName}</h6>
+                      <th key={captain}>
+                        <div className="typewriter">
+                          <h6>
+                            {captain} {captain && "(C)"}
+                          </h6>
+                        </div>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {viceCaptains?.map((vc) => {
+                    return (
+                      <td key={vc}>
+                        <div className="typewriter">
+                          <h6>
+                            {" "}
+                            {vc} {vc && "(VC)"}
+                          </h6>
                         </div>
                       </td>
                     );
                   })}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div>
-          {remainingEmployee &&
-            remainingEmployee.map((employee) => {
-              return (
-                <p
-                  onClick={() => assignEmployeeToCaptain(employee)}
-                  className="teamName"
-                >
-                  {employee.name}
-                </p>
-              );
-            })}
+                {rest?.map((r, index) => (
+                  <tr key={index}>
+                    {r.map((teamName) => {
+                      return (
+                        <td key={teamName}>
+                          <div className="typewriter">
+                            <h6> {teamName}</h6>
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            {remainingEmployee &&
+              remainingEmployee.map((employee) => {
+                return (
+                  <p
+                    onClick={() => assignEmployeeToCaptain(employee)}
+                    className="teamName"
+                  >
+                    {employee.name}
+                  </p>
+                );
+              })}
+          </div>
         </div>
       </div>
+      {showTeamVideo && <VideoBackground currentTeam={currentTeam} />}
     </>
   );
 }

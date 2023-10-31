@@ -32,7 +32,12 @@ export const CAPTAINS_LIST = [
   { name: "Yug Shah", designation: "Captain", gender: "male", remote: false },
 ];
 
-export const TEAM = ["Hydron", "Magnum", "Hellfire", "Zephyr"];
+export const TEAM = [
+  "Water Tribes",
+  "Earth Kingdom",
+  "Fire Nation",
+  "Air Nomads",
+];
 
 export const TEAM_DETAILS = [
   {
@@ -75,31 +80,18 @@ export const EMPLOYEE = [
     designation: "Software Engineer",
   },
   {
-    name: "Anujkumar Yadav",
-    remote: false,
-    designation: "Software Engineer",
-  },
-  {
     name: "Ashish Gupta",
     remote: false,
     designation: "Software Engineer",
   },
   { name: "Ayush Shah", remote: false, designation: "Software Engineer" },
-  {
-    name: "Chirag Madlani",
-    remote: false,
-    designation: "Software Engineer",
-  },
+
   {
     name: "Devyani Kaushik",
     remote: true,
     designation: "Software Engineer",
   },
-  {
-    name: "Dhruvin Maniar",
-    remote: false,
-    designation: "Software Engineer",
-  },
+
   {
     name: "Gunjan Gojiya",
     remote: true,
@@ -120,34 +112,15 @@ export const EMPLOYEE = [
     remote: false,
     designation: "Software Engineer",
   },
-  {
-    name: "Karan Hotchandani",
-    remote: false,
-    designation: "Software Engineer",
-  },
   { name: "Kenil Shah", remote: false, designation: "Software Engineer" },
-  {
-    name: "Krishal Shah",
-    remote: false,
-    designation: "Software Engineer",
-  },
+
   {
     name: "Kushal Shinde",
     remote: false,
     designation: "Software Engineer",
   },
   {
-    name: "Maulik Kotak",
-    remote: false,
-    designation: "Software Engineer",
-  },
-  {
     name: "Mayur Singal",
-    remote: false,
-    designation: "Software Engineer",
-  },
-  {
-    name: "Mohit Yadav",
     remote: false,
     designation: "Software Engineer",
   },
@@ -172,7 +145,7 @@ export const EMPLOYEE = [
     remote: false,
     designation: "Software Engineer",
   },
-  { name: "Raman Iyer", remote: false, designation: "Software Engineer" },
+
   {
     name: "Rupesh Chavan",
     remote: false,
@@ -189,17 +162,7 @@ export const EMPLOYEE = [
     designation: "Software Engineer",
   },
   {
-    name: "Sanket Bambulkar",
-    remote: false,
-    designation: "Software Engineer",
-  },
-  {
     name: "Sanket Shah",
-    remote: false,
-    designation: "Software Engineer",
-  },
-  {
-    name: "Satish Waghela",
     remote: false,
     designation: "Software Engineer",
   },
