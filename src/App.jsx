@@ -18,6 +18,7 @@ export default function App() {
     remoteEmployeeListToAllotRandomly,
     setRemoteEmployeeListToAllotRandomly,
   ] = useState([]);
+  const [teamCounter, setTeamCounter] = useState(0);
 
   useEffect(() => {
     const getTeamInfoFromLocalStorage = localStorage.getItem("teamInfo");
@@ -126,76 +127,55 @@ export default function App() {
   };
 
   const assignRandomlyEmployee = () => {
+    let prefferedRemote = true;
     if (remainingEmployee.length === 0) {
       alert("No remaining employees to assign.");
       return;
     }
 
-    if (remoteEmployeeListToAllotRandomly.length < 1) {
-      const employeeToAdd = handleGenerateRandomEmployee(remainingEmployee);
-      const teamWithMinTeamMembers = Math.min(
-        ...assignedCaptains.map(({ teamMembers }) => teamMembers.length)
-      );
-      const indexOfTeamWithLowestMembers = assignedCaptains.findIndex(
-        ({ teamMembers }) => teamMembers.length === teamWithMinTeamMembers
-      );
-      setCurrentCaptainIndex(indexOfTeamWithLowestMembers);
-      setCurrentTeam(employeeToAdd.teamName);
-      setAssignedCaptains((prev) =>
-        prev.map((teamInfo, i) => {
-          if (i === indexOfTeamWithLowestMembers) {
-            return {
-              ...teamInfo,
-              remoteCount: teamInfo.remoteCount + 1,
-              teamMembers: [...teamInfo.teamMembers, employeeToAdd],
-            };
-          } else {
-            return teamInfo;
-          }
-        })
-      );
+    const currentTeam = assignedCaptains[teamCounter];
 
-      setRemainingEmployee((prev) => {
-        return prev.filter((single) => single.name !== employeeToAdd.name);
-      });
-
-      return;
+    if (currentTeam.remoteCount === 2) {
+      prefferedRemote = false;
     }
 
-    const remoteEmployee = handleGenerateRandomEmployee(
-      remoteEmployeeListToAllotRandomly
-    );
+    let employeeToAdd = null;
 
-    const lowestRemoteCount = Math.min(
-      ...assignedCaptains.map(({ remoteCount }) => remoteCount)
-    );
-
-    const indexOfTeamWithLowestRemoteCount = assignedCaptains.findIndex(
-      ({ remoteCount }) => remoteCount === lowestRemoteCount
-    );
-
-    setCurrentCaptainIndex(indexOfTeamWithLowestRemoteCount);
-    setRemoteEmployeeListToAllotRandomly((prev) =>
-      prev.filter((single) => single.name !== remoteEmployee.name)
-    );
-    setCurrentTeam(remoteEmployee.teamName);
-    setAssignedCaptains((prev) =>
-      prev.map((teamInfo, i) => {
-        if (i === indexOfTeamWithLowestRemoteCount) {
-          return {
-            ...teamInfo,
-            remoteCount: teamInfo.remoteCount + 1,
-            teamMembers: [...teamInfo.teamMembers, remoteEmployee],
-          };
-        } else {
-          return teamInfo;
-        }
-      })
-    );
-
+    if (prefferedRemote) {
+      // if remote is empty then get from others and assign
+      if (remoteEmployeeListToAllotRandomly.length === 0) {
+        // get from all employee list
+        employeeToAdd = handleGenerateRandomEmployee(remainingEmployee);
+        currentTeam.teamMembers.push(employeeToAdd);
+      } else {
+        // get from remote and assign
+        employeeToAdd = handleGenerateRandomEmployee(
+          remoteEmployeeListToAllotRandomly
+        );
+        currentTeam.teamMembers.push(employeeToAdd);
+        currentTeam.remoteCount = currentTeam.remoteCount + 1;
+      }
+    } else {
+      //get from others and assign
+      employeeToAdd = handleGenerateRandomEmployee(remainingEmployee);
+      currentTeam.teamMembers.push(employeeToAdd);
+    }
     setRemainingEmployee((prev) => {
-      return prev.filter((single) => single.name !== remoteEmployee.name);
+      return prev.filter((single) => single.name !== employeeToAdd.name);
     });
+
+    setRemoteEmployeeListToAllotRandomly((prev) => {
+      return prev.filter((single) => single.name !== employeeToAdd.name);
+    });
+
+    setTeamCounter((prev) => {
+      prev++;
+      if (prev === 4) {
+        prev = 0;
+      }
+      return prev;
+    });
+    return;
   };
 
   const [teams, captains, viceCaptains, ...rest] =
@@ -204,22 +184,27 @@ export default function App() {
   return (
     <>
       <div style={{ padding: "1rem" }}>
-        <h2>Deuex Premier League</h2>
+        <h2>
+          Deuex Premier League <span style={{ color: "#255FD2" }}>2023</span>
+        </h2>
         <div className="App">
           <div style={{ width: "80%" }}>
             {!hasFourCaptains && (
               <button
-                className="button"
+                className="button-85"
                 onClick={assignTeamAndgenerateRandoCaptain}
               >
                 Choose Captain
               </button>
             )}
 
-            {viceCaptains.length === 4 &&
+            {viceCaptains?.length === 4 &&
               viceCaptains.every((item) => item !== undefined) && (
                 <div>
-                  <button className="button" onClick={assignRandomlyEmployee}>
+                  <button
+                    className="button-85"
+                    onClick={assignRandomlyEmployee}
+                  >
                     Choose player
                   </button>
                 </div>
@@ -281,10 +266,28 @@ export default function App() {
               </tbody>
             </table>
           </div>
-          <div>
-            {remainingEmployee &&
-              remainingEmployee.map((employee) => {
-                return (
+        </div>
+        <div className="teamnameContainer">
+          {hasFourCaptains && (
+              <p>Click on name to select employee</p>
+            )}
+          {remainingEmployee &&
+            remainingEmployee.map((employee) => {
+              return (
+                <div
+                  style={{
+                    display: "flex",
+                    borderRadius: "50x",
+                    alignItems: "center",
+                  }}
+                >
+                  <img
+                    style={{ borderRadius: "50px" }}
+                    width={50}
+                    height={50}
+                    alt={employee.name}
+                    src={employee.image}
+                  />
                   <p
                     onClick={() => assignEmployeeToCaptain(employee)}
                     className="teamName"
@@ -292,9 +295,9 @@ export default function App() {
                   >
                     {employee.name}
                   </p>
-                );
-              })}
-          </div>
+                </div>
+              );
+            })}
         </div>
       </div>
       {showTeamVideo && <VideoBackground currentTeam={currentTeam} />}
