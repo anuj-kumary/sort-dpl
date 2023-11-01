@@ -183,124 +183,125 @@ export default function App() {
 
   return (
     <>
-      <div style={{ padding: "1rem" }}>
-        <h2>
-          Deuex Premier League <span style={{ color: "#255FD2" }}>2023</span>
-        </h2>
-        <div className="App">
-          <div style={{ width: "80%" }}>
-            {!hasFourCaptains && (
-              <button
-                className="button-85"
-                onClick={assignTeamAndgenerateRandoCaptain}
-              >
-                Choose Captain
-              </button>
-            )}
-
-            {viceCaptains?.length === 4 &&
-              viceCaptains.every((item) => item !== undefined) && (
-                <div>
-                  <button
-                    className="button-85"
-                    onClick={assignRandomlyEmployee}
-                  >
-                    Choose player
-                  </button>
-                </div>
+      <div className="overlays"></div>
+      <div className="maincontainer">
+        <div style={{ padding: "1rem" }}>
+          <h2>
+            Deuex Premier League <span style={{ color: "#255FD2" }}>2023</span>
+          </h2>
+          <div className="App">
+            <div style={{ width: "80%" }}>
+              {!hasFourCaptains && (
+                <button
+                  className="button-85"
+                  onClick={assignTeamAndgenerateRandoCaptain}
+                >
+                  Choose Captain
+                </button>
               )}
 
-            <table className="tr-body">
-              <col className="hydron" />
-              <col className="magnum" />
-              <col className="hellfire" />
-              <col className="zephyr" />
-              <thead>
-                <tr>
-                  {teams?.map((team) => {
-                    return <th key={team}>{team}</th>;
-                  })}
-                </tr>
-                <tr>
-                  {captains?.map((captain) => {
-                    return (
-                      <th key={captain}>
-                        <div className="typewriter">
-                          <h6>
-                            {captain} {captain && "(C)"}
-                          </h6>
-                        </div>
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {viceCaptains?.map((vc) => {
-                    return (
-                      <td key={vc}>
-                        <div className="typewriter">
-                          <h6>
-                            {" "}
-                            {vc} {vc && "(VC)"}
-                          </h6>
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-                {rest?.map((r, index) => (
-                  <tr key={index}>
-                    {r.map((teamName) => {
+              {viceCaptains?.length === 4 &&
+                viceCaptains.every((item) => item !== undefined) && (
+                  <div>
+                    <button
+                      className="button-85"
+                      onClick={assignRandomlyEmployee}
+                    >
+                      Choose player
+                    </button>
+                  </div>
+                )}
+
+              <table className="tr-body">
+                <col className="hydron" />
+                <col className="magnum" />
+                <col className="hellfire" />
+                <col className="zephyr" />
+                <thead>
+                  <tr>
+                    {teams?.map((team) => {
+                      return <th key={team}>{team}</th>;
+                    })}
+                  </tr>
+                  <tr>
+                    {captains?.map((captain) => {
                       return (
-                        <td key={teamName}>
+                        <th key={captain}>
                           <div className="typewriter">
-                            <h6> {teamName}</h6>
+                            <h6>
+                              {captain} {captain && "(C)"}
+                            </h6>
+                          </div>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {viceCaptains?.map((vc) => {
+                      return (
+                        <td key={vc}>
+                          <div className="typewriter">
+                            <h6>
+                              {" "}
+                              {vc} {vc && "(VC)"}
+                            </h6>
                           </div>
                         </td>
                       );
                     })}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                  {rest?.map((r, index) => (
+                    <tr key={index}>
+                      {r.map((teamName) => {
+                        return (
+                          <td key={teamName}>
+                            <div className="typewriter">
+                              <h6> {teamName}</h6>
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="teamnameContainer">
+            {hasFourCaptains && <p>Click on name to select employee</p>}
+            {remainingEmployee &&
+              remainingEmployee.map((employee) => {
+                return (
+                  <div
+                    style={{
+                      display: "flex",
+                      borderRadius: "50x",
+                      alignItems: "center",
+                    }}
+                  >
+                    <img
+                      style={{ borderRadius: "50px" }}
+                      width={50}
+                      height={50}
+                      alt={employee.name}
+                      src={employee.image}
+                    />
+                    <p
+                      onClick={() => assignEmployeeToCaptain(employee)}
+                      className="teamName"
+                      style={{ cursor: "pointer" }}
+                    >
+                      {employee.name}
+                    </p>
+                  </div>
+                );
+              })}
           </div>
         </div>
-        <div className="teamnameContainer">
-          {hasFourCaptains && (
-              <p>Click on name to select employee</p>
-            )}
-          {remainingEmployee &&
-            remainingEmployee.map((employee) => {
-              return (
-                <div
-                  style={{
-                    display: "flex",
-                    borderRadius: "50x",
-                    alignItems: "center",
-                  }}
-                >
-                  <img
-                    style={{ borderRadius: "50px" }}
-                    width={50}
-                    height={50}
-                    alt={employee.name}
-                    src={employee.image}
-                  />
-                  <p
-                    onClick={() => assignEmployeeToCaptain(employee)}
-                    className="teamName"
-                    style={{ cursor: "pointer" }}
-                  >
-                    {employee.name}
-                  </p>
-                </div>
-              );
-            })}
-        </div>
+        {showTeamVideo && <VideoBackground currentTeam={currentTeam} />}
       </div>
-      {showTeamVideo && <VideoBackground currentTeam={currentTeam} />}
     </>
   );
 }
