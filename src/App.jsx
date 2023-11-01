@@ -146,19 +146,53 @@ export default function App() {
       if (remoteEmployeeListToAllotRandomly.length === 0) {
         // get from all employee list
         employeeToAdd = handleGenerateRandomEmployee(remainingEmployee);
-        currentTeam.teamMembers.push(employeeToAdd);
+        // currentTeam.teamMembers.push(employeeToAdd);
+        setAssignedCaptains((prev) =>
+          prev.map((teamInfo, i) => {
+            if (i === teamCounter) {
+              return {
+                ...teamInfo,
+                teamMembers: [...teamInfo.teamMembers, employeeToAdd],
+              };
+            } else {
+              return teamInfo;
+            }
+          })
+        );
       } else {
         // get from remote and assign
         employeeToAdd = handleGenerateRandomEmployee(
           remoteEmployeeListToAllotRandomly
         );
-        currentTeam.teamMembers.push(employeeToAdd);
-        currentTeam.remoteCount = currentTeam.remoteCount + 1;
+        setAssignedCaptains((prev) =>
+          prev.map((teamInfo, i) => {
+            if (i === teamCounter) {
+              return {
+                ...teamInfo,
+                teamMembers: [...teamInfo.teamMembers, employeeToAdd],
+                remoteCount: teamInfo.remoteCount + 1,
+              };
+            } else {
+              return teamInfo;
+            }
+          })
+        );
       }
     } else {
       //get from others and assign
       employeeToAdd = handleGenerateRandomEmployee(remainingEmployee);
-      currentTeam.teamMembers.push(employeeToAdd);
+      setAssignedCaptains((prev) =>
+        prev.map((teamInfo, i) => {
+          if (i === teamCounter) {
+            return {
+              ...teamInfo,
+              teamMembers: [...teamInfo.teamMembers, employeeToAdd],
+            };
+          } else {
+            return teamInfo;
+          }
+        })
+      );
     }
     setRemainingEmployee((prev) => {
       return prev.filter((single) => single.name !== employeeToAdd.name);
@@ -243,10 +277,7 @@ export default function App() {
                       return (
                         <td key={vc}>
                           <div className="typewriter">
-                            <h6>
-                              {" "}
-                              {vc} {vc && "(VC)"}
-                            </h6>
+                            <h6> {vc}</h6>
                           </div>
                         </td>
                       );
