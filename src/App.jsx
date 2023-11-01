@@ -21,6 +21,17 @@ export default function App() {
   const [teamCounter, setTeamCounter] = useState(0);
 
   useEffect(() => {
+    const filteredArray = remainingEmployee.filter((member) => {
+      return !assignedCaptains.some(
+        (team) =>
+          team.captainName === member.name ||
+          team.teamMembers.some((tm) => tm.name === member.name)
+      );
+    });
+    setRemainingEmployee(filteredArray);
+  }, []);
+
+  useEffect(() => {
     const getTeamInfoFromLocalStorage = localStorage.getItem("teamInfo");
     const parsedGetTeamInfoFromLocalStorage = JSON.parse(
       getTeamInfoFromLocalStorage
