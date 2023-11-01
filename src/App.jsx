@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CAPTAINS_LIST, EMPLOYEE, TEAM } from "./constant";
+import { CAPTAINS_LIST, EMPLOYEE, TEAM, TEAM_DETAILS } from "./constant";
 import "./style.css";
 import { trasnformTableData } from "./TableUtil";
 import VideoBackground from "./VideoBackground";
@@ -19,6 +19,16 @@ export default function App() {
     setRemoteEmployeeListToAllotRandomly,
   ] = useState([]);
   const [teamCounter, setTeamCounter] = useState(0);
+  useEffect(() => {
+    const filteredArray = remainingEmployee.filter((member) => {
+      return !assignedCaptains.some(
+        (team) =>
+          team.captainName === member.name ||
+          team.teamMembers.some((tm) => tm.name === member.name)
+      );
+    });
+    setRemainingEmployee(filteredArray);
+  }, []);
 
   useEffect(() => {
     const filteredArray = remainingEmployee.filter((member) => {
@@ -256,59 +266,80 @@ export default function App() {
                     </button>
                   </div>
                 )}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <div className="container">
+                  {TEAM_DETAILS.map((team) => {
+                    return (
+                      <img
+                        width="100px"
+                        height="100px"
+                        alt={team.team}
+                        src={team.src}
+                      />
+                    );
+                  })}
+                </div>
 
-              <table className="tr-body">
-                <col className="hydron" />
-                <col className="magnum" />
-                <col className="hellfire" />
-                <col className="zephyr" />
-                <thead>
-                  <tr>
-                    {teams?.map((team) => {
-                      return <th key={team}>{team}</th>;
-                    })}
-                  </tr>
-                  <tr>
-                    {captains?.map((captain) => {
-                      return (
-                        <th key={captain}>
-                          <div className="typewriter">
-                            <h6>
-                              {captain} {captain && "(C)"}
-                            </h6>
-                          </div>
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    {viceCaptains?.map((vc) => {
-                      return (
-                        <td key={vc}>
-                          <div className="typewriter">
-                            <h6> {vc}</h6>
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                  {rest?.map((r, index) => (
-                    <tr key={index}>
-                      {r.map((teamName) => {
+                <table className="tr-body">
+                  <col className="hydron" />
+                  <col className="magnum" />
+                  <col className="hellfire" />
+                  <col className="zephyr" />
+                  <thead>
+                    {/* <tr>
+                      {teams?.map((team) => {
+                        return <th key={team}>{team}</th>;
+                      })}
+                    </tr> */}
+
+                    <tr>
+                      {captains?.map((captain) => {
                         return (
-                          <td key={teamName}>
+                          <th key={captain}>
                             <div className="typewriter">
-                              <h6> {teamName}</h6>
+                              <h6>
+                                {captain} {captain && "(C)"}
+                              </h6>
+                            </div>
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {viceCaptains?.map((vc) => {
+                        return (
+                          <td key={vc}>
+                            <div className="typewriter">
+                              <h6> {vc}</h6>
                             </div>
                           </td>
                         );
                       })}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                    {rest?.map((r, index) => (
+                      <tr key={index}>
+                        {r.map((teamName) => {
+                          return (
+                            <td key={teamName}>
+                              <div className="typewriter">
+                                <h6> {teamName}</h6>
+                              </div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
           <div className="teamnameContainer">

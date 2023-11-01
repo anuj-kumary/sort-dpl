@@ -42,23 +42,23 @@ export const TEAM = [
 export const TEAM_DETAILS = [
   {
     id: 1,
-    src: "../src/assets/Hellfire.png",
-    team: "Hellfire",
+    src: "../src/assets/Water.png",
+    team: "Water Tribes",
   },
   {
     id: 2,
-    src: "../src/assets/Hydron.png",
-    team: "Hydron",
+    src: "../src/assets/Earth.png",
+    team: "Earth Kingdom",
   },
   {
     id: 3,
-    src: "../src/assets/Magnum.png",
-    team: "Magnum",
+    src: "../src/assets/Fire.png",
+    team: "Fire Nation",
   },
   {
     id: 3,
-    src: "../src/assets/Zephyr.png",
-    team: "Zephyr",
+    src: "../src/assets/Wind.png",
+    team: "Air Nomads",
   },
 ];
 
@@ -190,7 +190,7 @@ export const EMPLOYEE = [
     remote: true,
     designation: "Software Engineer",
     image:
-      "https://deuexsolutions.com/_next/image?url=%2Fimages%2Fteams%akash.png&w=3840&q=75",
+      "../src/assets/preet.jpg",
   },
   {
     name: "Prerana poojary",
@@ -247,14 +247,14 @@ export const EMPLOYEE = [
     remote: false,
     designation: "Software Engineer",
     image:
-      "https://deuexsolutions.com/_next/image?url=%2Fimages%2Fteams%akash.png&w=3840&q=75",
+      "../src/assets/sonal.jpeg",
   },
   {
     name: "Viral Ghag",
     remote: false,
     designation: "Software Engineer",
     image:
-      "https://deuexsolutions.com/_next/image?url=%2Fimages%2Fteams%akash.png&w=3840&q=75",
+      "../src/assets/viral.jpeg",
   },
   {
     name: "Yug Shah",

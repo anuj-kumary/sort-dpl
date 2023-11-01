@@ -50,6 +50,12 @@ td {
   margin-right: 2rem;
   margin-top: 3rem;
 }
+.container {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin-left: 2rem;
+}
 
 .button {
   margin: 1rem 0;
