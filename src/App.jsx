@@ -105,7 +105,7 @@ export default function App() {
 
       setAssignedCaptains((prevCaptains) => [...prevCaptains, result]);
       filterTeamMemberFromEmployee(randomCaptain);
-    }, 2500);
+    }, 3500);
   };
 
   const filterTeamMemberFromEmployee = (employee) => {
@@ -256,9 +256,20 @@ export default function App() {
       <div className="overlays"></div>
       <div className="maincontainer">
         <div style={{ padding: "1rem" }}>
+          <div className="App" style={{display: 'flex', justifyContent: 'space-between'}}>
+
           <h2>
             Deuex Premier League <span style={{ color: "#255FD2" }}>2023</span>
           </h2>
+          {!hasFourCaptains && (
+                  <button
+                    className="button-85"
+                    onClick={assignTeamAndgenerateRandoCaptain}
+                  >
+                    Choose Captain
+                  </button>
+                )}
+          </div>
           <div className="App">
             <div style={{ width: "80%" }}>
               <div
@@ -352,14 +363,7 @@ export default function App() {
               style={{ display: "flex", alignItems: "center" }}
             >
               <div>
-                {!hasFourCaptains && (
-                  <button
-                    className="button-85"
-                    onClick={assignTeamAndgenerateRandoCaptain}
-                  >
-                    Choose Captain
-                  </button>
-                )}
+               
 
                 {viceCaptains?.length === 4 &&
                   viceCaptains.every((item) => item !== undefined) && (
@@ -382,9 +386,9 @@ export default function App() {
                 }}
                 className={hasFourCaptains ? "optionaltext" : null}
               >
-                {hasFourCaptains && (
+                {(
                   <p style={{ paddingLeft: "1rem" }}>
-                    Click on name to select employee
+                    Players
                   </p>
                 )}
               </div>
