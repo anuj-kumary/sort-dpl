@@ -375,7 +375,10 @@ export default function App() {
               </div>
               <div
                 style={{
-                  width: viceCaptains?.every((item) => item === item) && "auto",
+                  width:
+                    viceCaptains?.length === 4 &&
+                    viceCaptains?.every((item) => item !== undefined) &&
+                    "auto",
                 }}
                 className={hasFourCaptains ? "optionaltext" : null}
               >
