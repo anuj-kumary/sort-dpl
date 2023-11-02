@@ -18,7 +18,9 @@ export default function App() {
     remoteEmployeeListToAllotRandomly,
     setRemoteEmployeeListToAllotRandomly,
   ] = useState([]);
-  const [teamCounter, setTeamCounter] = useState(0);
+  const [teamCounter, setTeamCounter] = useState(
+    JSON.parse(localStorage.getItem("teamIndex") ?? 0) ?? 0
+  );
   useEffect(() => {
     const filteredArray = remainingEmployee.filter((member) => {
       return !assignedCaptains.some(
@@ -46,12 +48,18 @@ export default function App() {
     const parsedGetTeamInfoFromLocalStorage = JSON.parse(
       getTeamInfoFromLocalStorage
     );
+    const getTeamIndexFromLocalStorage = localStorage.getItem("teamIndex");
+    const parsedGetTeamIndexFromLocalStorage = JSON.parse(
+      getTeamIndexFromLocalStorage
+    );
     setAssignedCaptains(parsedGetTeamInfoFromLocalStorage || []);
+    setTeamCounter(parsedGetTeamIndexFromLocalStorage || 0);
   }, []);
 
   useEffect(() => {
     localStorage.setItem("teamInfo", JSON.stringify(assignedCaptains));
-  }, [assignedCaptains]);
+    localStorage.setItem("teamIndex", JSON.stringify(teamCounter));
+  }, [assignedCaptains, teamCounter]);
 
   const hasFourCaptains =
     assignedCaptains.length === 4 &&
@@ -233,6 +241,13 @@ export default function App() {
     return;
   };
 
+  const getCaptainImage = (name) => {
+    const employeeImage = EMPLOYEE.filter((employee) => {
+      return employee.name === name;
+    });
+    return employeeImage[0].image;
+  };
+
   const [teams, captains, viceCaptains, ...rest] =
     trasnformTableData(assignedCaptains);
 
@@ -246,26 +261,6 @@ export default function App() {
           </h2>
           <div className="App">
             <div style={{ width: "80%" }}>
-              {!hasFourCaptains && (
-                <button
-                  className="button-85"
-                  onClick={assignTeamAndgenerateRandoCaptain}
-                >
-                  Choose Captain
-                </button>
-              )}
-
-              {viceCaptains?.length === 4 &&
-                viceCaptains.every((item) => item !== undefined) && (
-                  <div>
-                    <button
-                      className="button-85"
-                      onClick={assignRandomlyEmployee}
-                    >
-                      Choose player
-                    </button>
-                  </div>
-                )}
               <div
                 style={{
                   display: "flex",
@@ -276,12 +271,15 @@ export default function App() {
                 <div className="container">
                   {TEAM_DETAILS.map((team) => {
                     return (
-                      <img
-                        width="100px"
-                        height="100px"
-                        alt={team.team}
-                        src={team.src}
-                      />
+                      <div style={{ width: "25%", textAlign: "center" }}>
+                        <img
+                          width="100px"
+                          height="100px"
+                          alt={team.team}
+                          src={team.src}
+                        />
+                        <p>{team.team}</p>
+                      </div>
                     );
                   })}
                 </div>
@@ -292,18 +290,22 @@ export default function App() {
                   <col className="hellfire" />
                   <col className="zephyr" />
                   <thead>
-                    {/* <tr>
-                      {teams?.map((team) => {
-                        return <th key={team}>{team}</th>;
-                      })}
-                    </tr> */}
-
                     <tr>
                       {captains?.map((captain) => {
                         return (
                           <th key={captain}>
                             <div className="typewriter">
                               <h6>
+                                <img
+                                  style={{
+                                    borderRadius: "50px",
+                                    marginRight: "1rem",
+                                  }}
+                                  width={50}
+                                  height={50}
+                                  src={getCaptainImage(captain)}
+                                  alt={captain}
+                                />
                                 {captain} {captain && "(C)"}
                               </h6>
                             </div>
@@ -343,34 +345,83 @@ export default function App() {
             </div>
           </div>
           <div className="teamnameContainer">
-            {hasFourCaptains && <p>Click on name to select employee</p>}
-            {remainingEmployee &&
-              remainingEmployee.map((employee) => {
-                return (
-                  <div
-                    style={{
-                      display: "flex",
-                      borderRadius: "50x",
-                      alignItems: "center",
-                    }}
+            <div
+              className={!hasFourCaptains ? "button-style" : null}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <div>
+                {!hasFourCaptains && (
+                  <button
+                    className="button-85"
+                    onClick={assignTeamAndgenerateRandoCaptain}
                   >
-                    <img
-                      style={{ borderRadius: "50px" }}
-                      width={50}
-                      height={50}
-                      alt={employee.name}
-                      src={employee.image}
-                    />
-                    <p
-                      onClick={() => assignEmployeeToCaptain(employee)}
-                      className="teamName"
-                      style={{ cursor: "pointer" }}
+                    Choose Captain
+                  </button>
+                )}
+
+                {viceCaptains?.length === 4 &&
+                  viceCaptains.every((item) => item !== undefined) && (
+                    <div>
+                      <button
+                        className="button-85"
+                        onClick={assignRandomlyEmployee}
+                      >
+                        Choose random player
+                      </button>
+                    </div>
+                  )}
+              </div>
+              <div
+                style={{
+                  width: viceCaptains?.every((item) => item === item) && "auto",
+                }}
+                className={hasFourCaptains ? "optionaltext" : null}
+              >
+                {hasFourCaptains && (
+                  <p style={{ paddingLeft: "1rem" }}>
+                    Click on name to select employee
+                  </p>
+                )}
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                alignItems: "end",
+              }}
+            >
+              {remainingEmployee &&
+                remainingEmployee.map((employee) => {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        borderRadius: "50x",
+                        alignItems: "center",
+                        paddingLeft: "2rem",
+                        width: "50%",
+                      }}
                     >
-                      {employee.name}
-                    </p>
-                  </div>
-                );
-              })}
+                      <img
+                        style={{ borderRadius: "50px" }}
+                        width={50}
+                        height={50}
+                        alt={employee.name}
+                        src={employee.image}
+                      />
+                      <p
+                        onClick={() => assignEmployeeToCaptain(employee)}
+                        className="teamName"
+                        style={{ cursor: "pointer" }}
+                      >
+                        {employee.name}
+                      </p>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         </div>
         {showTeamVideo && <VideoBackground currentTeam={currentTeam} />}

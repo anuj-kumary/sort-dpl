@@ -13,13 +13,13 @@ h2 {
 .App {
   display: flex;
   justify-content: space-between;
+  width: 80%;
 }
 table {
   border-collapse: separate;
   border-radius: 10px;
   overflow: hidden;
   display: inline-table;
-  margin-top: 1rem;
 }
 th,
 td {
@@ -49,12 +49,11 @@ td {
   overflow: scroll;
   margin-right: 2rem;
   margin-top: 3rem;
+  width: 30%;
 }
 .container {
   display: flex;
-  justify-content: space-between;
-  width: 80%;
-  margin-left: 2rem;
+  width: 100%;
 }
 
 .button {
@@ -68,7 +67,6 @@ td {
 }
 .tr-body {
   border-radius: 10px;
-  width: 90%;
 }
 .hydron {
   background-color: #014170;
@@ -93,6 +91,8 @@ td {
   font-size: 15px;
   font-weight: 700;
   margin: 0;
+  display: flex;
+  align-items: center;
 }
 .confirm {
   width: 500px;
@@ -163,8 +163,12 @@ td {
   top: 0;
   left: 0;
 }
+.align {
+  display: flex;
+  justify-content: end;
+}
 .button-85 {
-  padding: 0.6em 2em;
+  padding: 0.6em 1em;
   border: none;
   outline: none;
   color: rgb(255, 255, 255);
@@ -176,7 +180,17 @@ td {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  margin: 2rem 0;
+  margin: 2rem 0rem;
+  margin-left: 1rem;
+}
+.button-style {
+  justify-content: end;
+  padding: 0 10px;
+}
+.optionaltext {
+  display: flex;
+  justify-content: end;
+  width: 100%;
 }
 
 .button-85:before {
