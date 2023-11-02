@@ -245,7 +245,7 @@ export default function App() {
     const employeeImage = EMPLOYEE.filter((employee) => {
       return employee.name === name;
     });
-    return employeeImage[0].image;
+    return employeeImage[0]?.image;
   };
 
   const [teams, captains, viceCaptains, ...rest] =
@@ -296,16 +296,18 @@ export default function App() {
                           <th key={captain}>
                             <div className="typewriter">
                               <h6>
-                                <img
-                                  style={{
-                                    borderRadius: "50px",
-                                    marginRight: "1rem",
-                                  }}
-                                  width={50}
-                                  height={50}
-                                  src={getCaptainImage(captain)}
-                                  alt={captain}
-                                />
+                                {captain && (
+                                  <img
+                                    style={{
+                                      borderRadius: "50px",
+                                      marginRight: "1rem",
+                                    }}
+                                    width={50}
+                                    height={50}
+                                    src={getCaptainImage(captain)}
+                                    alt={captain}
+                                  />
+                                )}
                                 {captain} {captain && "(C)"}
                               </h6>
                             </div>
