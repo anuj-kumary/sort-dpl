@@ -49,7 +49,6 @@ td {
   overflow: scroll;
   margin-right: 2rem;
   margin-top: 3rem;
-  width: 30%;
 }
 .container {
   display: flex;
@@ -186,11 +185,6 @@ td {
 .button-style {
   justify-content: end;
   padding: 0 10px;
-}
-.optionaltext {
-  display: flex;
-  justify-content: end;
-  width: 100%;
 }
 
 .button-85:before {

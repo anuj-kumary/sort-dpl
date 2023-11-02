@@ -14,8 +14,8 @@ export const trasnformTableData = (data) => {
   const otherTrs = largestTeam?.teamMembers?.map((t, index) => {
     return TEAM.map((team) => {
       const otherTeamMembers = data.find(
-        (d) => d.teamName === team
-      ).teamMembers;
+        (d) => d?.teamName === team
+      )?.teamMembers;
       return otherTeamMembers[index]?.name;
     });
   });

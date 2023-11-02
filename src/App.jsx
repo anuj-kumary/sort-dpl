@@ -10,7 +10,9 @@ export default function App() {
   );
   const [currentTeamIndex] = useState(0);
   const [currentTeam, setCurrentTeam] = useState("");
-  const [currentCaptainIndex, setCurrentCaptainIndex] = useState(0);
+  const [currentCaptainIndex, setCurrentCaptainIndex] = useState(
+    JSON.parse(localStorage.getItem("vcIndex") ?? 0) ?? 0
+  );
   const [removedEmployees, setRemovedEmployees] = useState([]);
   const [remainingEmployee, setRemainingEmployee] = useState(EMPLOYEE);
   const [showTeamVideo, setShowTeamVideo] = useState(false);
@@ -52,14 +54,21 @@ export default function App() {
     const parsedGetTeamIndexFromLocalStorage = JSON.parse(
       getTeamIndexFromLocalStorage
     );
+
+    const getVcIndexFromLocalStorage = localStorage.getItem("vcIndex");
+    const parsedGetVcIndexFromLocalStorage = JSON.parse(
+      getVcIndexFromLocalStorage
+    );
     setAssignedCaptains(parsedGetTeamInfoFromLocalStorage || []);
     setTeamCounter(parsedGetTeamIndexFromLocalStorage || 0);
+    setCurrentCaptainIndex(parsedGetVcIndexFromLocalStorage || 0);
   }, []);
 
   useEffect(() => {
     localStorage.setItem("teamInfo", JSON.stringify(assignedCaptains));
     localStorage.setItem("teamIndex", JSON.stringify(teamCounter));
-  }, [assignedCaptains, teamCounter]);
+    localStorage.setItem("vcIndex", JSON.stringify(currentCaptainIndex));
+  }, [assignedCaptains, teamCounter, currentCaptainIndex]);
 
   const hasFourCaptains =
     assignedCaptains.length === 4 &&
@@ -256,19 +265,34 @@ export default function App() {
       <div className="overlays"></div>
       <div className="maincontainer">
         <div style={{ padding: "1rem" }}>
-          <div className="App" style={{display: 'flex', justifyContent: 'space-between'}}>
+          <div
+            className="App"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <h2>
+              Deuex Premier League{" "}
+              <span style={{ color: "#255FD2" }}>2023</span>
+            </h2>
+            {!hasFourCaptains && (
+              <button
+                className="button-85"
+                onClick={assignTeamAndgenerateRandoCaptain}
+              >
+                Choose Captain
+              </button>
+            )}
 
-          <h2>
-            Deuex Premier League <span style={{ color: "#255FD2" }}>2023</span>
-          </h2>
-          {!hasFourCaptains && (
+            {viceCaptains?.length === 4 &&
+              viceCaptains.every((item) => item !== undefined) && (
+                <div>
                   <button
                     className="button-85"
-                    onClick={assignTeamAndgenerateRandoCaptain}
+                    onClick={assignRandomlyEmployee}
                   >
-                    Choose Captain
+                    Choose random player
                   </button>
-                )}
+                </div>
+              )}
           </div>
           <div className="App">
             <div style={{ width: "80%" }}>
@@ -359,48 +383,13 @@ export default function App() {
           </div>
           <div className="teamnameContainer">
             <div
-              className={!hasFourCaptains ? "button-style" : null}
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <div>
-               
-
-                {viceCaptains?.length === 4 &&
-                  viceCaptains.every((item) => item !== undefined) && (
-                    <div>
-                      <button
-                        className="button-85"
-                        onClick={assignRandomlyEmployee}
-                      >
-                        Choose random player
-                      </button>
-                    </div>
-                  )}
-              </div>
-              <div
-                style={{
-                  width:
-                    viceCaptains?.length === 4 &&
-                    viceCaptains?.every((item) => item !== undefined) &&
-                    "auto",
-                }}
-                className={hasFourCaptains ? "optionaltext" : null}
-              >
-                {(
-                  <p style={{ paddingLeft: "1rem" }}>
-                    Players
-                  </p>
-                )}
-              </div>
-            </div>
-            <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
-                alignItems: "end",
               }}
             >
+              <p style={{ textAlign: "center" }}>Players</p>
+
               {remainingEmployee &&
                 remainingEmployee.map((employee) => {
                   return (
@@ -410,7 +399,6 @@ export default function App() {
                         borderRadius: "50x",
                         alignItems: "center",
                         paddingLeft: "2rem",
-                        width: "50%",
                       }}
                     >
                       <img
